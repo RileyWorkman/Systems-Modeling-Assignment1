@@ -67,7 +67,7 @@ def get_cashier_count():
 def main():
 	random.seed(RANDOM_SEED)
 	np.random.seed(RANDOM_SEED)
-	num_cashiers = get_cashier_count()
+	num_cashiers = 1  # can change this to test with more cashiers
 	# 20, 40, 60 customer cases
 	results: dict[int, dict[str, float]] = {}
 	for case_size in [20, 40, 60]:

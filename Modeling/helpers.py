@@ -42,7 +42,7 @@ def run_case(num_customers, num_cashiers=1):
 	# runs the simulation for one case (20, 40, or 60 customers)
 	env = simpy.Environment()
 	cashier = simpy.Resource(env, capacity=num_cashiers)
-	records: List[CustomerRecord] = []
+	records = []
 
 	env.process(arrival_process(env, cashier, num_customers, records, interarrival_time))
 	env.run()
