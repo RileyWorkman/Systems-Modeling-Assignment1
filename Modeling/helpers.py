@@ -1,26 +1,11 @@
-"""Helpers consolidated
-"""
-from typing import Dict, Iterable, List, Tuple
+# Helper functions for simulation
 import csv
 import simpy
 from Attributes import CustomerRecord, OUTPUT_COLUMNS
 from config import interarrival_time, service_time
 
-def customer_process(
-		#defines environment ie simulation time and queue
-	env: simpy.Environment,
-	#customer id is an integer which is assigned to track
-	customer_id: int,
-	#simpy resource is used to model the cashiers availability
-	cashier: simpy.Resource,
-	#this lists the customer records
-	records: List[CustomerRecord],
-	#this is the time between consecutive events in minutes (ie between customer arrivals)
-	interarrival: float,
-	
-) -> Iterable[simpy.events.Event]:
-	"""SimPy process for a single customer such as iplement arrival, queueing, service, and record keeping.
-	"""
+def customer_process(env, customer_id, cashier, records, interarrival):
+	# this function handles a single customer going through the system
 	arrival_time = env.now
 	with cashier.request() as request:
 		yield request
@@ -44,56 +29,29 @@ def customer_process(
 			time_in_system=time_in_system,
 		)
 	)
-def arrival_process(
-	env: simpy.Environment,
-	cashier: simpy.Resource,
-	num_customers: int,
-	#logs records
-	records: List[CustomerRecord],
-	interarrival_fn,
-) -> Iterable[simpy.events.Event]:
-	"""Generate arrivals for a fixed customer-count experiment.
-
-	Note: The assignment cases are fixed at 20/40/60 customers, so this process
-	creates exactly ``num_customers`` arrivals.
-	"""
+def arrival_process(env, cashier, num_customers, records, interarrival_fn):
+	# generates customer arrivals - creates exactly the number of customers we want (20, 40, or 60)
 	for customer_id in range(1, num_customers + 1):
 
 		interarrival = interarrival_fn()
 		yield env.timeout(interarrival)
-		env.process(
-#customer process is an instances of a customer arriving and going through the designed system
-			customer_process(
-				env=env,
-				customer_id=customer_id,
-				cashier=cashier,
-				records=records,
-				interarrival=interarrival,
-			)
-		)
+		# start the customer process
+		env.process(customer_process(env, customer_id, cashier, records, interarrival))
 
-def run_case(num_customers: int, num_cashiers: int = 1) -> Tuple[List[CustomerRecord], Dict[str, float]]:
-	"""Run a single simulation case and return records plus metrics."""
+def run_case(num_customers, num_cashiers=1):
+	# runs the simulation for one case (20, 40, or 60 customers)
 	env = simpy.Environment()
 	cashier = simpy.Resource(env, capacity=num_cashiers)
 	records: List[CustomerRecord] = []
 
-	env.process(
-		arrival_process(
-			env=env,
-			cashier=cashier,
-			num_customers=num_customers,
-			records=records,
-			interarrival_fn=interarrival_time,
-		)
-	)
+	env.process(arrival_process(env, cashier, num_customers, records, interarrival_time))
 	env.run()
 
 	metrics = compute_metrics(records)
 	return records, metrics
 
-def compute_metrics(records: List[CustomerRecord]) -> Dict[str, float]:
-	"""Compute performance measures from records."""
+def compute_metrics(records):
+	# calculate all the performance metrics from the customer records
 	if not records:
 		return {
 			"num_customers": 0.0,
@@ -131,8 +89,8 @@ def compute_metrics(records: List[CustomerRecord]) -> Dict[str, float]:
 		"idle_time_percentage": idle_time_percentage,
 	}
 
-def export_records_csv(records: List[CustomerRecord], filename: str) -> None:
-	"""Export records to CSV with OUTPUT_COLUMNS."""
+def export_records_csv(records, filename):
+	# write the customer records to a CSV file
 	with open(filename, "w", newline="") as csvfile:
 		writer = csv.DictWriter(csvfile, fieldnames=OUTPUT_COLUMNS)
 		writer.writeheader()

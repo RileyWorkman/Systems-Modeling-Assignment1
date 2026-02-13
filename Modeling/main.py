@@ -4,17 +4,17 @@ import numpy as np
 from config import RANDOM_SEED
 from helpers import export_records_csv, run_case
 
-def summarize_comparison(results: dict[int, dict[str, float]], num_cashiers: int) -> None:
+def summarize_comparison(results, num_cashiers):
 	print(f"\nComparative analysis ({num_cashiers} cashier(s), 20 vs 40 vs 60 customers)")
 	for case_size in [20, 40, 60]:
-		m = results[case_size]
+		metrics = results[case_size]
 		print(
 			f"Case {case_size}: "
-			f"avg_wait={m['avg_waiting_time']:.3f}, "
-			f"avg_system={m['avg_time_in_system']:.3f}, "
-			f"p_wait={m['probability_of_waiting']:.3f}, "
-			f"utilization={m['cashier_utilization']:.3f}, "
-			f"idle_pct={m['idle_time_percentage']:.3f}"
+			f"avg_wait={metrics['avg_waiting_time']:.3f}, "
+			f"avg_system={metrics['avg_time_in_system']:.3f}, "
+			f"p_wait={metrics['probability_of_waiting']:.3f}, "
+			f"utilization={metrics['cashier_utilization']:.3f}, "
+			f"idle_pct={metrics['idle_time_percentage']:.3f}"
 		)
 
 	base = results[20]
@@ -29,8 +29,7 @@ def summarize_comparison(results: dict[int, dict[str, float]], num_cashiers: int
 		f"minutes from 20 to 60 customers."
 	)
 
-	# Numerical sufficiency criteria (assignment-facing assumptions).
-	# You can tune these thresholds if your instructor provides specific targets.
+	# these are my thresholds for deciding if we have enough cashiers
 	max_avg_wait = 5.0
 	max_probability_wait = 0.50
 	max_utilization = 0.90
@@ -50,8 +49,8 @@ def summarize_comparison(results: dict[int, dict[str, float]], num_cashiers: int
 			f"p_wait <= {max_probability_wait}, utilization <= {max_utilization})"
 		)
 
-def get_cashier_count() -> int:
-	"""Read cashier count from user input with safe default."""
+def get_cashier_count():
+	# ask user how many cashiers to test
 	try:
 		value = input("Enter number of cashiers (default 1): ").strip()
 		if not value:
@@ -65,7 +64,7 @@ def get_cashier_count() -> int:
 		print("Invalid value. Using default: 1")
 		return 1
 
-def main() -> None:
+def main():
 	random.seed(RANDOM_SEED)
 	np.random.seed(RANDOM_SEED)
 	num_cashiers = get_cashier_count()
