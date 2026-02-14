@@ -1,3 +1,6 @@
+Everything for the source code and assignment can be found on my GitHub: 
+https://github.com/RileyWorkman/Systems-Modeling-Assignment1/tree/main
+
 Grocery Store Cashier Queue Simulation
 
 Store Cashier Queue Program
