@@ -1,79 +1,25 @@
-# Grocery Store Cashier Queue Simulation
+Grocery Store Cashier Queue Simulation
 
-Discrete event simulation modeling a grocery store checkout system with customer arrivals, queuing, and service.
+Store Cashier Queue Program
 
-## Requirements
+To run the code, use a newer version of python such as python 3.8 or higher should also work the dependencies are listed in `requirements.txt`
 
-- Python 3.8 or higher
-- Dependencies listed in `requirements.txt`
+To set up, clode the repository, create a virtual environment, activate the virtual environment and install dependencies. 
 
-## Setup Instructions
+To run, run the main.py file, note that there are some other files such as helpers for core functiosn.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/RileyWorkman/Systems-Modeling-Assignment1.git
-   cd Systems-Modeling-Assignment1
-   ```
+The mode will run simulations for 3 scenarios,ie 20, 40, 60 customers and generate a csv for results. It also displays the performance metrics. 
 
-2. **Create a virtual environment** (recommended)
-   ```bash
-   python -m venv .venv
-   ```
+Inputs: I made it so that you can choose the number of cashiers and it determines the sufficiency of the number of cashiers being in place.
 
-3. **Activate the virtual environment**
-   - Windows:
-     ```bash
-     .venv\Scripts\activate
-     ```
-   - Mac/Linux:
-     ```bash
-     source .venv/bin/activate
-     ```
+Some assumptions are as follows:
+Interarrival time: Uniform(1, 10) minutes
+Service time: Discrete distribution [2,3,4,5,6,8] minutes
+Random seed: 50 
 
-4. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+numpy==2.4.2
+simpy==4.1.1
 
-## Running the Simulation
-
-```bash
-python Modeling/main.py
-```
-
-This will:
-- Run simulations for 20, 40, and 60 customers
-- Generate CSV files with customer records
-- Display performance metrics and comparative analysis
-
-## Output Files
-
-The simulation generates three CSV files:
-- `case_20_1cashier.csv`
-- `case_40_1cashier.csv`
-- `case_60_1cashier.csv`
-
-Each contains detailed records for every customer including arrival time, service time, waiting time, etc.
-
-## Configuration
-
-To change the number of cashiers, edit line 70 in `Modeling/main.py`:
-```python
-num_cashiers = 1  # change this value
-```
-
-## Project Structure
-
-```
-Modeling/
-├── main.py          # Entry point - runs the simulation
-├── helpers.py       # Simulation functions and metrics
-├── config.py        # Configuration and probability distributions
-├── Attributes.py    # Data models
-```
-
-## Assumptions
-
-- **Interarrival time**: Uniform(1, 10) minutes
-- **Service time**: Discrete distribution [2,3,4,5,6,8] minutes
-- **Random seed**: 50 (for reproducibility)
+.venv/
+__pycache__/
+*.pyc
